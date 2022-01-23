@@ -102,8 +102,10 @@ Caballo::Caballo(char equipo){
 }
 
 bool Caballo::es_movimiento_valido(int cxs, int cys, int cxl, int cyl, bool come){
+    int a = abs(cxs-cxl);
+    int b = abs(cys-cyl);
     return(
-        (abs(cxs-cxl)==2 && abs(cys-cyl)==1) || (abs(cys-cyl)==2 && abs(cxs-cxl)==1)
+        (a==2 && b==1) || (b==2 && a==1)
     );
 }
 
@@ -116,8 +118,10 @@ Alfil::Alfil(char equipo){
 }
 
 bool Alfil::es_movimiento_valido(int cxs, int cys, int cxl, int cyl, bool come){
+    int a = abs(cxs-cxl);
+    int b = abs(cys-cyl);
     return(
-        (abs(cxs-cxl)==abs(cys-cyl)) && ((cxs=!cxl) || (cys=!cyl))
+        (a==b)
     );
 }
 
@@ -129,8 +133,10 @@ Rey::Rey(char equipo){
 }
 
 bool Rey::es_movimiento_valido(int cxs, int cys, int cxl, int cyl, bool come){
+    int a = abs(cxs-cxl);
+    int b = abs(cys-cyl);
     return(
-        (abs(cxs-cxl)>=1 && abs(cys-cyl)>=1) && ((cxs=!cxl) || (cys=!cyl))
+        (a<=1 && b<=1)
     );
 }
 
@@ -142,8 +148,10 @@ Reina::Reina(char equipo){
 }
 
 bool Reina::es_movimiento_valido(int cxs, int cys, int cxl, int cyl, bool come){
+    int a = abs(cxs-cxl);
+    int b = abs(cys-cyl);
     return(
-        ((cxs==cxl && cys!=cyl) || (cys==cyl && cxs!=cxl)) || ((abs(cxs-cxl)==abs(cys-cyl)) && ((cxs=!cxl) || (cys=!cyl)))
+        a==0 || b==0 || a==b
     );
 }
 
@@ -155,15 +163,15 @@ Peon::Peon(char equipo){
     this->equipo = equipo;
 }
 
-bool Peon::es_movimiento_valido(int cys, int cxs, int cyl, int cxl, bool come){
+bool Peon::es_movimiento_valido(int cxs, int cys, int cxl, int cyl, bool come){
     if(this->equipo=='b'){
         if(come)
             return(
                 (cys+1==cyl) && (abs(cxs-cxl)==1)
             );
-        if(cxs==1){
+        if(cys==1){
             return(
-                (cxs==cxl) && (cys+1==cyl || cys+2==cyl)
+                (cxs==cxl) && (cyl==2 || cyl==3)
             );
         }
         else{
@@ -177,20 +185,19 @@ bool Peon::es_movimiento_valido(int cys, int cxs, int cyl, int cxl, bool come){
             return(
                 (cys-1==cyl) && (abs(cxs-cxl)==1)
             );
-        if(cxs==6){
+        if(cys==6){
             return(
-                (cxs==cxl) && /*((cys-1==cyl) || cys-2==cyl)*/ (abs(cys-cyl)<=2) && (cyl=!cys)
+                (cxs==cxl) && (cyl==4 || cyl==5)
             );
         }
         else{
             return(
-                (cxs==cxl) && /*(cys-1==cyl)*/ abs(cys-cyl)==1
+                (cxs==cxl) && abs(cys-cyl)==1
             );
         }
     }
     return false;
 }
-
 
 
 Vacio::Vacio(){

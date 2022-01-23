@@ -94,6 +94,7 @@ bool Tablero::menu_mover(char jugador){
     int columna;
     int fila2;
     int columna2;
+    bool come = false;
     cout << "----------------------------------" << endl;
     cout << "TURNO DE LAS ";
     if(jugador=='w')
@@ -118,9 +119,14 @@ bool Tablero::menu_mover(char jugador){
         return false;
     }
     else
-        cout << "En la posicion (" << fila << ", " << columna << ") hay un(a) " << tablero[fila][columna]->devolver_nombre() << endl;
+        cout << "En la posicion (" << columna << ", " << fila << ") hay un(a) " << tablero[fila][columna]->devolver_nombre() << endl;
     
-    
+    if(tablero[fila][columna]->devolver_equipo()!=jugador){
+        cout << "Esta ficha no es tuya!" << endl;
+        return false;
+    }
+
+
     cout << "Ingrese la coordenada x [entre 0 - 8] -> ";    cin >> columna2;
     while(columna2 < 0 || columna2 > 7) {
         cout << "Columna no valida. Ingrese de nuevo. [entre 0 - 8]";
@@ -130,15 +136,35 @@ bool Tablero::menu_mover(char jugador){
     cout << "Ingrese la coordenada y [entre 0 - 8] -> ";    cin >> fila2;
     while(fila2 < 0 || fila2 > 7) {
         cout << "Fila no valida. Ingrese de nuevo. [entre 0 - 8]";
-        cin >> fila2; 
+        cin >> fila2;
     }
 
-    if  (tablero[fila][columna]->es_movimiento_valido(fila,columna,fila2,columna2,!tablero[fila2][columna2]->esta_vacia()) && 
-        (tablero[fila2][columna2]->devolver_equipo() != tablero[fila][columna]->devolver_equipo())){
-        //tablero[fila][columna]->mover(fila2,columna2);
-        mover(fila,columna,fila2,columna2);
-        return true;
+    if(columna==columna2 && fila==fila2){
+        cout << "No poder moverte en el lugar!" << endl;
+        return false;
     }
+
+    if(tablero[fila2][columna2]->devolver_equipo()==jugador){
+        cout << "No podes capturar tu propia ficha!" << endl;
+        return false;
+    }
+
+    if(tablero[fila2][columna2]->devolver_equipo()!='n'){
+        come = true;
+    }
+
+    //if  (tablero[fila][columna]->es_movimiento_valido(fila,columna,fila2,columna2,come)){
+    if  (tablero[fila][columna]->es_movimiento_valido(columna,fila,columna2,fila2,come)){
+        
+        mover(fila,columna,fila2,columna2);
+        //mover(columna,fila,columna2,fila2);
+        return true;
+     
+
+    } 
+    else
+        cout << "El movimiento no es valido" << endl;
+    
 
     return false;
 }
