@@ -16,8 +16,8 @@ class Ficha {
         std::string devolver_nombre();
         char devolver_caracter();
         char devolver_equipo();
-        void asignar_ficha(Ficha* ficha);
-        void vaciar();
+        //void asignar_ficha(Ficha* ficha);
+        //void vaciar();
         void imprimir();
 };
 

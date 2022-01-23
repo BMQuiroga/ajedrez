@@ -16,44 +16,6 @@ Tablero::Tablero(){
 }
 
 void Tablero::setear_fichas(){
-    /*
-    Torre torrew('w');
-    Caballo caballow('w');
-    Alfil alfilw('w');
-    Rey reyw('w');
-    Reina reinaw('w');
-    Peon peonw('w');
-    Torre torreb('b');
-    Caballo caballob('b');
-    Alfil alfilb('b');
-    Rey reyb('b');
-    Reina reinab('b');
-    Peon peonb('b');
-    Vacio vacio;
-
-    this->tablero[0][0]->asignar_ficha(&torreb);
-    this->tablero[1][0]->asignar_ficha(&caballob);
-    this->tablero[2][0]->asignar_ficha(&alfilb);
-    this->tablero[3][0]->asignar_ficha(&reinab);
-    this->tablero[4][0]->asignar_ficha(&reyb);
-    this->tablero[5][0]->asignar_ficha(&alfilb);
-    this->tablero[6][0]->asignar_ficha(&caballob);
-    this->tablero[7][0]->asignar_ficha(&torreb);
-    this->tablero[0][7]->asignar_ficha(&torrew);
-    this->tablero[1][7]->asignar_ficha(&caballow);
-    this->tablero[2][7]->asignar_ficha(&alfilw);
-    this->tablero[3][7]->asignar_ficha(&reinaw);
-    this->tablero[4][7]->asignar_ficha(&reyw);
-    this->tablero[5][7]->asignar_ficha(&alfilw);
-    this->tablero[6][7]->asignar_ficha(&caballow);
-    this->tablero[7][7]->asignar_ficha(&torrew);
-    for(int i=0; i<7; i++){
-        this->tablero[i][1]->asignar_ficha(&peonb);
-        this->tablero[i][6]->asignar_ficha(&peonw);
-        for(int j=2; j<6; j++){
-            this->tablero[i][j]->asignar_ficha(&vacio);
-        }
-    }*/
     this->tablero[0][0]= new Torre('b');
     this->tablero[0][1]= new Caballo('b');
     this->tablero[0][2]= new Alfil('b');
@@ -64,7 +26,8 @@ void Tablero::setear_fichas(){
     this->tablero[0][7]= new Torre('b');
     for(int i=0; i<8; i++){
         this->tablero[1][i]= new Peon('b');
-        this->tablero[6][i]= new Peon('w');
+        //this->tablero[6][i]= new Peon('w');
+        this->tablero[6][i]= new Vacio;//ESTE NO VA
         for(int j=2; j<6; j++){
             this->tablero[j][i]= new Vacio;
         }
@@ -170,9 +133,11 @@ bool Tablero::menu_mover(char jugador){
 }
 
 void Tablero::mover(int cxs, int cys, int cxl, int cyl){
-    this->tablero[cxl][cyl]->asignar_ficha(this->tablero[cxs][cys]);
-    this->tablero[cxs][cys]->vaciar();
-
+    //this->tablero[cxl][cyl]->asignar_ficha(this->tablero[cxs][cys]);
+    //this->tablero[cxs][cys]->vaciar();
+    delete this->tablero[cxl][cyl];
+    this->tablero[cxl][cyl]=this->tablero[cxs][cys];
+    this->tablero[cxs][cys]= new Vacio;
 }
 
 void Tablero::imprimir(){
@@ -187,3 +152,10 @@ void Tablero::imprimir(){
     cout << "++++++++++" << std::endl;
 }
 
+Tablero::~Tablero(){
+    for(int i=0; i<8; i++){
+        for(int j=0; j<8; j++){
+            delete this->tablero[i][j];
+        }
+    }
+}

@@ -89,8 +89,10 @@ Torre::Torre(char equipo){
 }
 
 bool Torre::es_movimiento_valido(int cxs, int cys, int cxl, int cyl, bool come){
+    int a = abs(cxs-cxl);
+    int b = abs(cys-cyl);
     return(
-        (cxs==cxl && cys!=cyl) || (cys==cyl && cxs!=cxl)
+        a==0 || b==0
     );
 }
 

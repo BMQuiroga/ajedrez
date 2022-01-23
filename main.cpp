@@ -15,7 +15,7 @@ int main(){
         }
         turnovalido = false;
         while(!turnovalido){
-            turnovalido = tablero->menu_mover('b');
+            turnovalido = tablero->menu_mover('w');//PARA PRUEBAS
         }
         turnovalido = false;
     }

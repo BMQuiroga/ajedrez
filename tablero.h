@@ -5,6 +5,7 @@ class Tablero {
         Ficha ***tablero;
     public:
         Tablero();
+        ~Tablero();
         void setear_fichas();
         bool es_valido();
         bool menu_mover(char jugador);
