@@ -15,6 +15,20 @@ Tablero::Tablero(){
     setear_fichas();
 }
 
+Tablero::Tablero(Tablero * anterior){
+    Ficha *** casilla;
+    casilla = new Ficha**[8];
+    for(int i=0; i<8; i++)
+        casilla[i] = new Ficha*[8];
+    
+    this->tablero = casilla;
+     for(int i=0; i<8; i++){
+        for(int j=0; j<8; j++){
+            this->tablero[i][j] = anterior->tablero[i][j];
+        }
+    }
+}
+
 void Tablero::setear_fichas(){
     this->tablero[0][0]= new Torre('b');
     this->tablero[0][1]= new Caballo('b');
@@ -42,10 +56,27 @@ void Tablero::setear_fichas(){
     this->tablero[7][7]= new Torre('w');
 }
 
-bool Tablero::es_valido(){
+void Tablero::encontrar_rey(char jugador, int x, int y){
     for(int i=0; i<8; i++){
         for(int j=0; j<8; j++){
-            if (this->tablero[i][j]->puede_comer_rey())
+            if (this->tablero[i][j]->devolver_caracter()=='K'){
+                if (this->tablero[i][j]->devolver_equipo()==jugador){
+                    x = j;
+                    y = i;
+                    return;
+                }
+            }
+        }
+    }
+}
+
+bool Tablero::es_valido(char jugador){
+    int reyx = 0;
+    int reyy = 0;
+    encontrar_rey(jugador,reyx,reyy);
+    for(int i=0; i<8; i++){
+        for(int j=0; j<8; j++){
+            if (this->tablero[i][j]->es_movimiento_valido(j,i,reyx,reyy,true))
                 return false;
         }
     }
@@ -118,11 +149,23 @@ bool Tablero::menu_mover(char jugador){
 
     //if  (tablero[fila][columna]->es_movimiento_valido(fila,columna,fila2,columna2,come)){
     if  (tablero[fila][columna]->es_movimiento_valido(columna,fila,columna2,fila2,come)){
-        
-        mover(fila,columna,fila2,columna2);
-        //mover(columna,fila,columna2,fila2);
-        return true;
-     
+        if (validador_de_movimientos(columna,fila,columna2,fila2,tablero[fila][columna]->devolver_caracter())){
+            Tablero siguiente;
+            siguiente.mover_provisional(fila,columna,fila2,columna2);
+            if(siguiente.es_valido(jugador)){
+                //delete siguiente;
+                siguiente.borrar_vacio_provisional(fila,columna);
+                mover_definitivo(fila,columna,fila2,columna2);
+                return true;
+            }
+            else{
+                siguiente.borrar_vacio_provisional(fila,columna);
+                cout << "El movimiento no es valido debido a que tu rey queda en jaque" << endl;
+            }
+
+        }
+        else
+            cout << "El recorrido esta bloqueado, Movimiento invalido" << endl;  
 
     } 
     else
@@ -132,11 +175,23 @@ bool Tablero::menu_mover(char jugador){
     return false;
 }
 
-void Tablero::mover(int cxs, int cys, int cxl, int cyl){
+void Tablero::borrar_vacio_provisional(int x, int y){
+    delete this->tablero[x][y];
+}
+
+void Tablero::mover_provisional(int cxs, int cys, int cxl, int cyl){
+    //this->tablero[cxl][cyl]->asignar_ficha(this->tablero[cxs][cys]);
+    //this->tablero[cxs][cys]->vaciar();
+    //delete this->tablero[cxl][cyl];
+    this->tablero[cxl][cyl]= this->tablero[cxs][cys];
+    this->tablero[cxs][cys]= new Vacio;
+}
+
+void Tablero::mover_definitivo(int cxs, int cys, int cxl, int cyl){
     //this->tablero[cxl][cyl]->asignar_ficha(this->tablero[cxs][cys]);
     //this->tablero[cxs][cys]->vaciar();
     delete this->tablero[cxl][cyl];
-    this->tablero[cxl][cyl]=this->tablero[cxs][cys];
+    this->tablero[cxl][cyl]= this->tablero[cxs][cys];
     this->tablero[cxs][cys]= new Vacio;
 }
 
@@ -158,4 +213,66 @@ Tablero::~Tablero(){
             delete this->tablero[i][j];
         }
     }
+}
+
+bool Tablero::validador_de_movimientos(int cxs, int cys, int cxl, int cyl, char ficha){
+    int x = abs(cxs-cxl);
+    int y = abs(cys-cyl);
+    if (ficha == 'R' || (ficha == 'Q' && (x==0 || y==0))){
+        if (x==0){
+            if (cys>cyl){
+                for(int i=cyl; i<cyl; i++){
+                    if(!tablero[i][cxs]->esta_vacia())
+                        return false;
+                }
+            }
+            else{
+                for(int i=cys; i<cys; i++){
+                    if(!tablero[i][cxs]->esta_vacia())
+                        return false;
+                }
+            }
+        }
+        if (y==0){
+            if (cxs>cxl){
+                for(int i=cxl; i<cxl; i++){
+                    if(!tablero[cys][i]->esta_vacia())
+                        return false;
+                }
+            }
+            else{
+                for(int i=cxs; i<cxs; i++){
+                    if(!tablero[cys][i]->esta_vacia())
+                        return false;
+                }
+            }
+        }
+    }
+    if (ficha == 'B' || (ficha == 'Q' && x==y)){
+        if (cxs>cxl && cys>cyl){//CASO 1
+            for (int i=0; i>x; i++){
+                if (!tablero[cys-1-i][cxs-1-i]->esta_vacia())
+                    return false;
+            }
+        }
+        if (cxs<cxl && cys>cyl){//CASO2
+            for (int i=0; i>x; i++){
+                if (!tablero[cys-1-i][cxs+1+i]->esta_vacia())
+                    return false;
+            }
+        }
+        if (cxs>cxl && cys<cyl){//CASO3
+            for (int i=0; i>x; i++){
+                if (!tablero[cys+1+i][cxs-1-i]->esta_vacia())
+                    return false;
+            }
+        }
+        if (cxs<cxl && cys<cyl){//CASO 4
+            for (int i=0; i>x; i++){
+                if (!tablero[cys+1+i][cxs+1+i]->esta_vacia())
+                    return false;
+            }
+        }
+    }
+    return true;
 }

@@ -11,7 +11,7 @@ class Ficha {
         //virtual ~Ficha() = 0;
         //virtual void mover(int x, int y);
         virtual bool es_movimiento_valido(int cxs, int cys, int cxl, int cyl, bool come) = 0;
-        /*virtual*/ bool puede_comer_rey();
+        //bool puede_comer_rey(int cxs, int cys, int cxk, int cyk);
         bool esta_vacia();
         std::string devolver_nombre();
         char devolver_caracter();
@@ -27,7 +27,7 @@ class Torre: public Ficha {
         //~Torre();
         Torre(char equipo);
         bool es_movimiento_valido(int cxs, int cys, int cxl, int cyl, bool come);
-        bool puede_comer_rey();
+
 };
 
 class Caballo: public Ficha {
@@ -36,7 +36,7 @@ class Caballo: public Ficha {
         //~Caballo();
         Caballo(char equipo);
         bool es_movimiento_valido(int cxs, int cys, int cxl, int cyl, bool come);
-        bool puede_comer_rey();
+
 };
 
 class Alfil: public Ficha {
@@ -45,7 +45,7 @@ class Alfil: public Ficha {
         //~Alfil();
         Alfil(char equipo);
         bool es_movimiento_valido(int cxs, int cys, int cxl, int cyl, bool come);
-        bool puede_comer_rey();
+
 };
 
 class Rey: public Ficha {
@@ -54,7 +54,7 @@ class Rey: public Ficha {
         //~Rey();
         Rey(char equipo);
         bool es_movimiento_valido(int cxs, int cys, int cxl, int cyl, bool come);
-        bool puede_comer_rey();
+
 };
 
 class Reina: public Ficha {
@@ -63,7 +63,7 @@ class Reina: public Ficha {
         //~Reina();
         Reina(char equipo);
         bool es_movimiento_valido(int cxs, int cys, int cxl, int cyl, bool come);
-        bool puede_comer_rey();
+
 };
 
 class Peon: public Ficha {
@@ -72,7 +72,7 @@ class Peon: public Ficha {
         //~Peon();
         Peon(char equipo);
         bool es_movimiento_valido(int cxs, int cys, int cxl, int cyl, bool come);
-        bool puede_comer_rey();
+
 };
 
 class Vacio: public Ficha {
@@ -81,5 +81,4 @@ class Vacio: public Ficha {
         //~Vacio();
         Vacio();
         bool es_movimiento_valido(int cxs, int cys, int cxl, int cyl, bool come);
-        bool puede_comer_rey();
 };

@@ -19,5 +19,6 @@ int main(){
         }
         turnovalido = false;
     }
+    delete tablero;
     return 0;
 }

@@ -46,15 +46,16 @@ Vacio::~Vacio(){
     
 }*/
 
+/*
 void Ficha::vaciar(){
     this->nombre = "Vacio";
     this->caracter = ' ';
     this->equipo = 'n';
-}
-
-bool Ficha::puede_comer_rey(){
+}*/
+/*
+bool Ficha::puede_comer_rey(int cxs, int cys, int cxk, int cyk){
     return false;
-}
+}*/
 
 bool Ficha::esta_vacia(){
     return (!(this->equipo=='w' || this->equipo=='b'));
@@ -68,13 +69,13 @@ char Ficha::devolver_caracter(){
     return this->caracter;
 }
 
-
+/*
 void Ficha::asignar_ficha(Ficha * ficha){
     this->nombre = ficha->devolver_nombre();
     this->caracter = ficha->devolver_caracter();
     this->equipo = ficha->devolver_equipo();
 
-}
+}*/
 
 char Ficha::devolver_equipo(){
     return this->equipo;
