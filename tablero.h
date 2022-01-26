@@ -5,8 +5,8 @@ class Tablero {
         Ficha ***tablero;
     public:
         Tablero();
-        Tablero(Tablero * tablero);
-        ~Tablero();
+        Tablero(Tablero * anterior);
+        void destruir();
         void setear_fichas();
         bool es_valido(char jugador);
         bool menu_mover(char jugador);
@@ -15,7 +15,7 @@ class Tablero {
         void imprimir();
         bool validador_de_movimientos(int cxs, int cys, int cxl, int cyl, char ficha);
         void borrar_vacio_provisional(int x, int y);
-        void encontrar_rey(char jugador, int x, int y);
+        void encontrar_rey(char jugador, int * x, int * y);
     
 
 };

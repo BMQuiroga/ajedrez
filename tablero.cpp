@@ -56,13 +56,13 @@ void Tablero::setear_fichas(){
     this->tablero[7][7]= new Torre('w');
 }
 
-void Tablero::encontrar_rey(char jugador, int x, int y){
+void Tablero::encontrar_rey(char jugador, int *x, int *y){
     for(int i=0; i<8; i++){
         for(int j=0; j<8; j++){
             if (this->tablero[i][j]->devolver_caracter()=='K'){
                 if (this->tablero[i][j]->devolver_equipo()==jugador){
-                    x = j;
-                    y = i;
+                    *x = j;
+                    *y = i;
                     return;
                 }
             }
@@ -73,11 +73,17 @@ void Tablero::encontrar_rey(char jugador, int x, int y){
 bool Tablero::es_valido(char jugador){
     int reyx = 0;
     int reyy = 0;
-    encontrar_rey(jugador,reyx,reyy);
+    encontrar_rey(jugador,&reyx,&reyy);
     for(int i=0; i<8; i++){
         for(int j=0; j<8; j++){
-            if (this->tablero[i][j]->es_movimiento_valido(j,i,reyx,reyy,true))
-                return false;
+            if (this->tablero[i][j]->devolver_equipo()!=jugador){
+                if (this->tablero[i][j]->es_movimiento_valido(j,i,reyx,reyy,true)){
+                    if(validador_de_movimientos(j,i,reyx,reyy,tablero[i][j]->devolver_caracter())){
+                        cout << "La pieza de (" << j << ", " << i << ") puede comerte al rey" << endl;
+                        return false;
+                    }
+                } 
+            }
         }
     }
     return true;
@@ -150,16 +156,25 @@ bool Tablero::menu_mover(char jugador){
     //if  (tablero[fila][columna]->es_movimiento_valido(fila,columna,fila2,columna2,come)){
     if  (tablero[fila][columna]->es_movimiento_valido(columna,fila,columna2,fila2,come)){
         if (validador_de_movimientos(columna,fila,columna2,fila2,tablero[fila][columna]->devolver_caracter())){
-            Tablero siguiente;
-            siguiente.mover_provisional(fila,columna,fila2,columna2);
-            if(siguiente.es_valido(jugador)){
+            //Tablero siguiente;
+            //siguiente.mover_provisional(fila,columna,fila2,columna2);
+            //if(siguiente.es_valido(jugador)){
+
+            Tablero siguiente(this);
+            Ficha * aux_llegada = tablero[fila2][columna2];
+            Ficha * aux_salida = tablero[fila][columna];
+            mover_provisional(fila,columna,fila2,columna2);
+
+            if(es_valido(jugador)){
                 //delete siguiente;
-                siguiente.borrar_vacio_provisional(fila,columna);
-                mover_definitivo(fila,columna,fila2,columna2);
+                //siguiente.borrar_vacio_provisional(fila,columna);
+                //mover_definitivo(fila,columna,fila2,columna2);
+                delete aux_llegada;
                 return true;
             }
             else{
-                siguiente.borrar_vacio_provisional(fila,columna);
+                delete aux_salida;
+                this->tablero = siguiente.tablero;
                 cout << "El movimiento no es valido debido a que tu rey queda en jaque" << endl;
             }
 
@@ -207,7 +222,7 @@ void Tablero::imprimir(){
     cout << "++++++++++" << std::endl;
 }
 
-Tablero::~Tablero(){
+void Tablero::destruir(){
     for(int i=0; i<8; i++){
         for(int j=0; j<8; j++){
             delete this->tablero[i][j];
@@ -221,13 +236,13 @@ bool Tablero::validador_de_movimientos(int cxs, int cys, int cxl, int cyl, char 
     if (ficha == 'R' || (ficha == 'Q' && (x==0 || y==0))){
         if (x==0){
             if (cys>cyl){
-                for(int i=cyl; i<cyl; i++){
+                for(int i=cyl+1; i<cys; i++){
                     if(!tablero[i][cxs]->esta_vacia())
                         return false;
                 }
             }
             else{
-                for(int i=cys; i<cys; i++){
+                for(int i=cys+1; i<cyl; i++){
                     if(!tablero[i][cxs]->esta_vacia())
                         return false;
                 }
@@ -235,13 +250,13 @@ bool Tablero::validador_de_movimientos(int cxs, int cys, int cxl, int cyl, char 
         }
         if (y==0){
             if (cxs>cxl){
-                for(int i=cxl; i<cxl; i++){
+                for(int i=cxl+1; i<cxs; i++){
                     if(!tablero[cys][i]->esta_vacia())
                         return false;
                 }
             }
             else{
-                for(int i=cxs; i<cxs; i++){
+                for(int i=cxs+1; i<cxl; i++){
                     if(!tablero[cys][i]->esta_vacia())
                         return false;
                 }
@@ -249,26 +264,27 @@ bool Tablero::validador_de_movimientos(int cxs, int cys, int cxl, int cyl, char 
         }
     }
     if (ficha == 'B' || (ficha == 'Q' && x==y)){
+        int final = x-1; //Hecho para que no cuente como "camino" la casilla de llegada, si no estuviera, el alfil no podria comer
         if (cxs>cxl && cys>cyl){//CASO 1
-            for (int i=0; i>x; i++){
+            for (int i=0; i<final; i++){
                 if (!tablero[cys-1-i][cxs-1-i]->esta_vacia())
                     return false;
             }
         }
         if (cxs<cxl && cys>cyl){//CASO2
-            for (int i=0; i>x; i++){
+            for (int i=0; i<final; i++){
                 if (!tablero[cys-1-i][cxs+1+i]->esta_vacia())
                     return false;
             }
         }
         if (cxs>cxl && cys<cyl){//CASO3
-            for (int i=0; i>x; i++){
+            for (int i=0; i<final; i++){
                 if (!tablero[cys+1+i][cxs-1-i]->esta_vacia())
                     return false;
             }
         }
         if (cxs<cxl && cys<cyl){//CASO 4
-            for (int i=0; i>x; i++){
+            for (int i=0; i<final; i++){
                 if (!tablero[cys+1+i][cxs+1+i]->esta_vacia())
                     return false;
             }
