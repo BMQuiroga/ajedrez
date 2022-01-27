@@ -16,6 +16,7 @@ class Tablero {
         bool validador_de_movimientos(int cxs, int cys, int cxl, int cyl, char ficha);
         void borrar_vacio_provisional(int x, int y);
         void encontrar_rey(char jugador, int * x, int * y);
+        bool jaque_mate(char atacante, char rival);
     
 
 };

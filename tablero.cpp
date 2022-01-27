@@ -292,3 +292,33 @@ bool Tablero::validador_de_movimientos(int cxs, int cys, int cxl, int cyl, char 
     }
     return true;
 }
+
+bool Tablero::jaque_mate(char atacante, char rival){
+    for(int i=0; i<8; i++){
+        for(int j=0; j<8; j++){
+            for(int k=0; k<8; k++){
+                for(int l=0; l<8; l++){
+                    if(tablero[j][i]->devolver_equipo()==rival){
+                        if(tablero[j][i]->es_movimiento_valido(i,j,k,l,true) || tablero[j][i]->es_movimiento_valido(i,j,k,l,false)){
+                            if (validador_de_movimientos(i,j,k,l,tablero[j][i]->devolver_caracter())){
+                                Tablero siguiente(this);
+                                //Ficha * aux_llegada = tablero[l][k];
+                                Ficha * aux_salida = tablero[j][i];
+                                mover_provisional(j,i,l,k);
+                                if(es_valido(rival)){
+                                    delete aux_salida;
+                                    return true;
+                                }
+                                else{
+                                    delete aux_salida;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return false;
+}
